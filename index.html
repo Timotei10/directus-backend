@@ -466,13 +466,25 @@
 
 <!-- ABOUT SECTION -->
 <section id="about-section" class="bg-white px-6 py-20">
-    <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-12">About Us</h2>
-
-    <!-- Lista elementelor About -->
-    <div id="about-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 opacity-0 transition-opacity duration-700 ease-in-out">
-        <!-- Itemele About vor fi inserate din JavaScript -->
+    <div class="max-w-5xl mx-auto text-center mb-16">
+        <h2 class="text-4xl font-bold text-[#8c5a2b]">💍 About Us – More Than Just a Wedding Video</h2>
+        <p class="mt-4 text-gray-600 text-lg">
+            Discover how we’re reshaping the future through intelligent design and automation.
+        </p>
     </div>
+
+    <div id="about-list" class="flex flex-col items-center gap-6 opacity-0 transition-opacity duration-500"></div>
 </section>
+
+<!-- MODAL -->
+<div id="aboutModal" class="fixed inset-0 z-50 bg-black bg-opacity-50 hidden flex items-center justify-center p-4">
+    <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full p-8 relative">
+        <button id="closeModal" class="absolute top-4 right-4 text-gray-500 hover:text-[#8c5a2b] text-2xl">&times;</button>
+        <h3 id="modalTitle" class="text-2xl font-bold text-[#8c5a2b] mb-4">Title</h3>
+        <p id="modalDescription" class="text-gray-700 text-base leading-relaxed">Full description or form here...</p>
+    </div>
+</div>
+
 
 <!-- TESTIMONIALS SECTION -->
 <section id="testimonials-section" class="bg-white px-6 py-20">
@@ -1085,6 +1097,10 @@
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
         const aboutList = document.getElementById('about-list');
+        const modal = document.getElementById('aboutModal');
+        const modalTitle = document.getElementById('modalTitle');
+        const modalDescription = document.getElementById('modalDescription');
+        const closeModal = document.getElementById('closeModal');
 
         try {
             const response = await fetch('http://localhost:8055/items/about');
@@ -1092,35 +1108,69 @@
 
             if (data?.data?.length) {
                 data.data.forEach(item => {
-                    const article = document.createElement('article');
-                    article.classList.add('bg-white', 'rounded-lg', 'shadow-md', 'overflow-hidden');
-
-                    // fallback dacă imaginea lipsește
                     const imageURL = item.image
                         ? `http://localhost:8055/assets/${item.image}`
-                        : 'https://via.placeholder.com/400x250?text=No+Image';
+                        : 'https://via.placeholder.com/100x100?text=No+Image';
 
-                    article.innerHTML = `
-            <img src="${imageURL}" alt="${item.title}" class="w-full h-48 object-cover">
-            <div class="p-6">
-              <h3 class="text-2xl font-bold text-[#8c5a2b] mb-2">${item.title}</h3>
-              <p class="text-gray-700">${item.description}</p>
+                    const card = document.createElement('article');
+                    card.className = `
+  bg-[#f9f6f1]
+  border border-[#d8c0a5]
+  rounded-2xl shadow-lg p-6 text-center
+  hover:scale-105 transition-transform duration-300
+  w-full max-w-md
+`;
+
+
+                    card.innerHTML = `
+            <div class="flex justify-center mb-4">
+              <img src="${imageURL}" alt="${item.title}" class="w-16 h-16 object-contain rounded-full border border-[#8c5a2b] p-1 bg-white shadow-sm">
             </div>
+            <h3 class="text-xl font-semibold text-[#8c5a2b] mb-2">${item.title}</h3>
+            <p class="text-gray-700 text-sm mb-4">${item.description.substring(0, 100)}...</p>
+            <button class="bg-[#8c5a2b] text-white px-4 py-2 rounded-md text-sm hover:bg-[#a56e38] transition-all open-modal"
+              data-title="${item.title}" data-description="${item.description}">
+              Learn more
+            </button>
           `;
 
-                    aboutList.appendChild(article);
+                    aboutList.appendChild(card);
                 });
 
+                // Show section
                 aboutList.classList.add('opacity-100');
-            } else {
-                aboutList.innerHTML = '<p class="text-center text-gray-600">No about items found.</p>';
             }
+
+            // Modal open
+            document.addEventListener('click', (e) => {
+                if (e.target.classList.contains('open-modal')) {
+                    const title = e.target.getAttribute('data-title');
+                    const description = e.target.getAttribute('data-description');
+
+                    modalTitle.textContent = title;
+                    modalDescription.textContent = description;
+                    modal.classList.remove('hidden');
+                }
+            });
+
+            // Modal close
+            closeModal.addEventListener('click', () => {
+                modal.classList.add('hidden');
+            });
+
+            window.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.add('hidden');
+                }
+            });
+
         } catch (error) {
             console.error('Error fetching about items:', error);
             aboutList.innerHTML = '<p class="text-center text-red-600">Failed to load about content.</p>';
         }
     });
 </script>
+
 
 <script>
     document.addEventListener('DOMContentLoaded', async () => {
@@ -1140,12 +1190,18 @@
                         : 'https://via.placeholder.com/300x300?text=No+Photo';
 
                     article.innerHTML = `
-    <img src="${photoURL}" alt="${member.name}" class="w-32 h-32 object-cover rounded-full mb-4">
-    <h3 class="text-xl font-bold text-[#8c5a2b] mb-1">${member.name}</h3>
-    <p class="text-sm text-gray-600 font-semibold mb-2">${member.role}</p>
-    <p class="text-gray-700 text-sm max-w-sm">${member.bio}</p>
-`;
+                        <img src="${photoURL}" alt="${member.name}" class="team-photo w-32 h-32 object-cover rounded-full mb-4 cursor-pointer transition-transform duration-300 hover:scale-110">
+                        <h3 class="text-xl font-bold text-[#8c5a2b] mb-1">${member.name}</h3>
+                        <p class="text-sm text-gray-600 font-semibold mb-2">${member.role}</p>
+                        <p class="team-bio text-gray-700 text-sm max-w-sm hidden">${member.bio}</p>
+                    `;
 
+                    const img = article.querySelector('.team-photo');
+                    const bio = article.querySelector('.team-bio');
+
+                    img.addEventListener('click', () => {
+                        bio.classList.toggle('hidden');
+                    });
 
                     teamList.appendChild(article);
                 });
@@ -1205,7 +1261,8 @@
             <p class="text-yellow-500 text-lg mb-4">${ratingStars}</p>
             ${
                         testimonial.video
-                            ? `<video controls class="w-full rounded-md shadow">
+                            ? `<video controls class="max-w-[400px] w-full rounded-md shadow mx-auto mt-2">
+
                      <source src="http://localhost:8055/assets/${testimonial.video}" type="video/mp4">
                      Your browser does not support the video tag.
                    </video>`
