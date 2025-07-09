@@ -1,6 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
+    <style>
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in-up {
+            animation: fadeInUp 0.8s ease-out both;
+        }
+    </style>
+
+
+
+
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Wedding Video Studio</title>
@@ -161,25 +182,33 @@
     </style>
 </head>
 <body class="relative overflow-x-hidden">
-
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper/swiper-bundle.min.css" />
 <!-- Trandafiri animati -->
 <script>
     document.addEventListener('DOMContentLoaded', () => {
         showWelcomeMessage();
-        for (let i = 0; i < 10; i++) {
+
+        for (let i = 0; i < 12; i++) {
             const rose = document.createElement('div');
             rose.className = 'rose';
+            rose.style.position = 'fixed';
             rose.style.left = `${Math.random() * 100}vw`;
-            rose.style.animationDuration = `${10 + Math.random() * 10}s`;
+            rose.style.top = `-${Math.random() * 20 + 10}vh`;
+            rose.style.zIndex = '1';
+            rose.style.animation = `fall ${10 + Math.random() * 10}s linear infinite`;
             rose.style.animationDelay = `${Math.random() * 10}s`;
+
             rose.innerHTML = `
-          <svg viewBox="0 0 24 24" fill="#f9a8d4" xmlns="http://www.w3.org/2000/svg">
-            <path d="M12 2C10.9 2 9.68 2.44 9.03 3.5C7.5 6 10 8 12 9.5C14 8 16.5 6 15 3.5C14.35 2.44 13.1 2 12 2ZM12 11C8 11 4 13.5 4 17.5C4 18.33 4.67 19 5.5 19H18.5C19.33 19 20 18.33 20 17.5C20 13.5 16 11 12 11Z"/>
-          </svg>`;
+                <svg viewBox="0 0 64 64" width="28" height="28" fill="#8c5a2b" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M32 2c-4 0-8 4-8 10 0 6 8 10 8 14 0-4 8-8 8-14 0-6-4-10-8-10zm0 22c-12 0-24 8-24 20 0 2 1 4 3 4h42c2 0 3-2 3-4 0-12-12-20-24-20z"/>
+                </svg>
+            `;
+
             document.body.appendChild(rose);
         }
     });
 </script>
+
 
 <!-- NAVIGATION FIXED -->
 <nav class="fixed top-0 left-0 right-0 bg-white border-b border-[#f0c1d9] flex justify-between items-center py-4 px-6 z-50 text-[#8c5a2b] font-semibold text-lg shadow-sm">
@@ -195,9 +224,11 @@
         <a href="#portfolio" class="hover:text-[#b0843f] transition">Portfolio</a>
         <a href="#blog-section" class="hover:text-[#b0843f] transition">Blog</a>
         <a href="#about-section" class="hover:text-[#b0843f] transition">About Us</a>
+        <a href="#testimonials-section" class="hover:text-[#b0843f] transition">Testimonials</a> <!-- link nou -->
         <a href="#team-section" class="hover:text-[#b0843f] transition">Our Team</a>
         <a href="#contact" class="hover:text-[#b0843f] transition">Contact</a>
     </div>
+
 
 
 
@@ -248,45 +279,190 @@
     </div>
 </div>
 
+
 <!-- HERO SECTION -->
-<section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center px-4 py-28 pt-[6rem] md:pt-32 bg-gradient-to-br from-pink-50 to-pink-100">
-    <h1 class="text-5xl md:text-6xl text-[#8c5a2b] font-semibold mb-4">Capturing Your Magical Moments</h1>
-    <p class="text-lg text-[#8c5a2b] max-w-2xl mb-6 italic">Elegant wedding videography crafted with passion and precision. Timeless visuals for your once-in-a-lifetime day.</p>
-    <a href="#portfolio" class="bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-3 px-6 rounded-full transition">View Portfolio</a>
+<section id="hero" class="relative min-h-screen flex flex-col justify-center items-center text-center px-4 py-28 pt-[6rem] md:pt-32 overflow-hidden">
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover opacity-30 z-0">
+        <source src="videos/wedding-bg.mp4" type="video/mp4" />
+    </video>
+
+    <!-- Textul principal -->
+    <div class="relative z-10 text-[#8c5a2b] max-w-3xl">
+        <h1 class="text-5xl md:text-6xl font-semibold mb-4">Capturing Your Magical Moments</h1>
+        <p class="text-lg italic mb-6">Elegant wedding videography crafted with passion and precision. Timeless visuals for your once-in-a-lifetime day.</p>
+        <a href="#portfolio" class="bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-4 px-10 text-lg md:text-xl rounded-full transition">
+            View Portfolio
+        </a>
+    </div>
+
+    <!-- Review-uri rotative mai jos -->
+    <div class="relative z-10 mt-16 max-w-2xl text-center">
+        <div id="reviews-slider" class="text-xl italic font-semibold text-[#8c5a2b] opacity-80 min-h-[3rem] transition-opacity duration-500">
+            <!-- Text din JS -->
+        </div>
+    </div>
 </section>
+
+
 
 <!-- PORTFOLIO SECTION -->
 <section id="portfolio" class="px-6 py-20 bg-[#f9f6f1]">
     <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-12">Portfolio</h2>
-    <div id="portfolio-content" class="grid grid-cols-1 md:grid-cols-3 gap-8">
-        <!-- Videos or message inserted by JS -->
-    </div>
-</section>
-<!--aici apar video!-->
-<div id="videos-list" class="space-y-12 max-w-6xl mx-auto p-4 opacity-0 transition-opacity duration-700 ease-in-out">
-    <!-- Videoclipurile vor fi inserate aici din JavaScript -->
-        <video width="600" controls class="rounded-lg shadow-lg flex-shrink-0">
-            <source src="..." type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="max-w-md text-center md:text-left">
-            <h2 class="text-2xl font-semibold mb-2" id="video-title">Title here</h2>
-            <p class="mb-2 text-gray-600" id="video-description">Description here</p>
-            <p class="text-sm text-gray-500 mb-1"><strong>Wedding Date:</strong> <span id="video-wedding-date">2025-07-01</span></p>
-            <p class="text-sm text-gray-500"><strong>Client Name:</strong> <span id="video-client-name">Client here</span></p>
+    <!-- Container video -->
+    <div id="videos-list" class="mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 max-w-7xl p-4">       <!-- Fiecare card video -->
+        <div class="bg-white rounded-xl border-4 border-[#8c5a2b] shadow-lg overflow-hidden flex flex-col items-center">
+            <!-- Video cu dimensiune fixă -->
+            <video width="320" height="180" controls class="rounded-t-lg object-cover">
+                <source src="..." type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
+
+            <!-- Informații sub video -->
+            <div class="max-w-md text-center md:text-left p-4">
+                <h2 class="text-2xl font-semibold mb-2 text-[#8c5a2b]" id="video-title">Title here</h2>
+                <p class="mb-2 text-gray-600" id="video-description">Description here</p>
+                <p class="text-sm text-gray-500 mb-1"><strong>Wedding Date:</strong> <span id="video-wedding-date">2025-07-01</span></p>
+                <p class="text-sm text-gray-500"><strong>Client Name:</strong> <span id="video-client-name">Client here</span></p>
+            </div>
         </div>
+
+    </div> <!-- end videos-list -->
+
+</section> <!-- end portfolio -->
+
+<!-- Include Swiper CSS și JS -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@9/swiper-bundle.min.js"></script>
+
+<!-- IMAGE SLIDESHOW-->
+<div id="photos-slideshow" class="max-w-6xl mx-auto my-12 opacity-0 transition-opacity duration-700">
+    <h2 class="text-3xl font-bold text-center text-[#8c5a2b] mb-6">Portfolio Highlights</h2>
+
+    <div class="swiper photoSwiper rounded-xl shadow-lg border-4 border-[#8c5a2b]">
+        <div class="swiper-wrapper" id="photos-slides">
+            <!-- Slide-urile se vor crea din JS -->
+        </div>
+
+        <!-- Navigație fără clasa text-[#8c5a2b], culoarea o setăm în CSS -->
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
     </div>
 </div>
+
+<!-- Modal pentru poza mărită -->
+<div id="image-modal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <img id="modal-image" src="" alt="Full size" class="max-w-full max-h-full rounded-lg shadow-lg" />
+    <button id="modal-close" class="absolute top-5 right-5 text-white text-3xl font-bold cursor-pointer select-none focus:outline-none">&times;</button>
+</div>
+
+<style>
+    /* Activează modalul: opacity și pointer-events */
+    #image-modal.opacity-100 {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Stil pentru săgețile swiper */
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #8c5a2b; /* culoarea bronz */
+    }
+
+    /* Culoare bronz pentru bulinele de paginare */
+    .swiper-pagination-bullet {
+        background-color: #8c5a2b; /* bronz */
+        opacity: 0.6;
+        transition: background-color 0.3s ease;
+    }
+
+    .swiper-pagination-bullet-active {
+        background-color: #b3763f; /* un bronz mai deschis pentru active */
+        opacity: 1;
+    }
+
+</style>
+
+<!-- ZOOM IN PHOTOS -->
+
+<style>
+    /* Zoom-in la hover pe imagini */
+    .zoom-hover {
+        transition: transform 0.3s ease;
+        cursor: pointer;
+    }
+    .zoom-hover:hover {
+        transform: scale(1.05);
+    }
+
+    /* Activează modalul: opacity și pointer-events */
+    #image-modal.opacity-100 {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    /* Stil pentru săgețile swiper */
+    .swiper-button-next,
+    .swiper-button-prev {
+        color: #8c5a2b; /* culoarea bronz */
+    }
+
+    /* Culoare bronz pentru bulinele de paginare */
+    .swiper-pagination-bullet {
+        background-color: #8c5a2b; /* bronz */
+        opacity: 0.6;
+        transition: background-color 0.3s ease;
+    }
+
+    .swiper-pagination-bullet-active {
+        background-color: #b3763f; /* un bronz mai deschis pentru active */
+        opacity: 1;
+    }
+</style>
+
+
+
+
 
 <!-- BLOG SECTION -->
 <section id="blog-section" class="bg-[#f9f6f1] px-6 py-20">
     <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-12">Latest Blog Posts</h2>
 
-    <!-- Lista articolelor de blog -->
     <div id="blog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 opacity-0 transition-opacity duration-700 ease-in-out">
         <!-- Articolele vor fi inserate din JavaScript -->
     </div>
 </section>
+<!-- Blog Post Modal -->
+<div id="blog-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center px-4">
+    <div class="bg-white max-w-2xl w-full max-h-[90vh] overflow-y-auto rounded-xl shadow-xl p-6 relative border-2 border-[#8c5a2b] animate-fadeIn">
+        <button id="close-modal" class="absolute top-3 right-4 text-2xl font-bold text-gray-400 hover:text-gray-800">&times;</button>
+        <div id="modal-content" class="space-y-4">
+            <!-- Conținutul articolului va fi injectat aici -->
+        </div>
+    </div>
+</div>
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+        animation: fadeIn 0.25s ease-out;
+    }
+</style>
+
+
+<style>
+    @keyframes fadeIn {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .animate-fadeIn {
+        animation: fadeIn 0.3s ease-out;
+    }
+</style>
+
 
 <!-- ABOUT SECTION -->
 <section id="about-section" class="bg-white px-6 py-20">
@@ -295,6 +471,15 @@
     <!-- Lista elementelor About -->
     <div id="about-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 opacity-0 transition-opacity duration-700 ease-in-out">
         <!-- Itemele About vor fi inserate din JavaScript -->
+    </div>
+</section>
+
+<!-- TESTIMONIALS SECTION -->
+<section id="testimonials-section" class="bg-white px-6 py-20">
+    <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-12">What Clients Say</h2>
+
+    <div id="testimonial-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 opacity-0 transition-opacity duration-700 ease-in-out">
+        <!-- Testimonials will be inserted here by JS -->
     </div>
 </section>
 
@@ -326,25 +511,6 @@
 
 
 <script>
-    // Animation trandafiri (nu modificat)
-    document.addEventListener('DOMContentLoaded', () => {
-        // Creează 10 flori "rose" animate pe ecran
-        for (let i = 0; i < 10; i++) {
-            const rose = document.createElement('div');
-            rose.className = 'rose';
-            rose.style.left = `${Math.random() * 100}vw`;
-            rose.style.animationDuration = `${10 + Math.random() * 10}s`;
-            rose.style.animationDelay = `${Math.random() * 10}s`;
-            rose.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="#f9a8d4" xmlns="http://www.w3.org/2000/svg">
-        <path d="M12 2C10.9 2 9.68 2.44 9.03 3.5C7.5 6 10 8 12 9.5C14 8 16.5 6 15 3.5C14.35 2.44 13.1 2 12 2ZM12 11C8 11 4 13.5 4 17.5C4 18.33 4.67 19 5.5 19H18.5C19.33 19 20 18.33 20 17.5C20 13.5 16 11 12 11Z"/>
-      </svg>`;
-            document.body.appendChild(rose);
-        }
-
-        // Verifică dacă userul este deja logat (din localStorage)
-        showWelcomeMessage();
-    });
 
     // ELEMENTE UI (modal login/register)
     const loginRegisterBtn = document.getElementById('loginRegisterBtn');
@@ -567,23 +733,25 @@
                     : null;
 
                 const videoBlock = document.createElement('div');
-                videoBlock.className = 'flex flex-col md:flex-row items-center gap-6';
+                videoBlock.className = "relative group rounded-xl overflow-hidden cursor-pointer shadow-lg bg-white border-4 border-[#8c5a2b] w-[360px] h-[200px] flex items-center justify-center";
 
                 videoBlock.innerHTML = `
-  <div class="flex flex-col md:flex-row items-center bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 w-full animate-fade-in">
-    <video class="w-full md:w-2/3 max-h-[400px] object-cover" controls>
-      <source src="${videoUrl}" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
-    <div class="p-6 md:w-1/3 text-center md:text-left space-y-2">
-      <h2 class="text-2xl font-bold text-gray-900">${video.title}</h2>
-      <p class="text-gray-700">${video.description || 'No description provided.'}</p>
-      <p class="text-sm text-gray-500"><strong>Wedding Date:</strong> ${video.wedding_date ? new Date(video.wedding_date).toLocaleDateString() : 'N/A'}</p>
-      <p class="text-sm text-gray-500"><strong>Client Name:</strong> ${video.client_name || 'N/A'}</p>
-    </div>
+  <video
+    src="${videoUrl}"
+    muted
+    playsinline
+    preload="metadata"
+    loop
+    class="w-full h-full object-cover rounded-xl transform transition-transform duration-300"
+  ></video>
+
+  <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none bg-gradient-to-t from-black to-transparent rounded-xl"></div>
+
+  <div class="absolute bottom-2 left-2 right-2 p-2 bg-white bg-opacity-90 rounded-md shadow-md opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none">
+    <h3 class="text-xl font-bold text-[#8c5a2b] truncate">${video.title}</h3>
+    <p class="text-sm text-gray-700 line-clamp-2">${video.description || ''}</p>
   </div>
 `;
-
 
 
                 container.appendChild(videoBlock);
@@ -610,8 +778,8 @@
 </script>
 
 <script>
-    const directusUrl = 'http://localhost:8055'; // Adaptează dacă folosești alt URL
-    const videosContainer = document.getElementById('videos-list'); // Container în care le afișăm
+    const directusUrl = 'http://localhost:8055';
+    const videosContainer = document.getElementById('videos-list');
 
     async function loadPublicVideos() {
         try {
@@ -619,48 +787,144 @@
             const data = await res.json();
 
             if (!data.data || data.data.length === 0) {
-                videosContainer.innerHTML = '<p>No videos found.</p>';
+                videosContainer.innerHTML = '<p class="text-center text-gray-500">No videos found.</p>';
                 return;
             }
 
-            videosContainer.innerHTML = ''; // Golește containerul
+            videosContainer.innerHTML = ''; // curățăm containerul
 
             data.data.forEach(video => {
-                const videoElement = document.createElement('div');
-                videoElement.classList.add('video-card');
+                if (!video.video_file || !video.video_file.filename_disk) return;
 
-                const videoUrl = video?.video_file?.filename_disk
-                    ? `${directusUrl}/assets/${video.video_file.filename_disk}`
-                    : null;
+                const videoUrl = `${directusUrl}/assets/${video.video_file.filename_disk}`;
 
-                videoElement.innerHTML = `
-                    <h3>${video.title}</h3>
-                    <p>${video.description || ''}</p>
-                    <video width="640" controls>
-                        <source src="${videoUrl}" type="video/mp4">
-                        Your browser does not support the video tag.
-                    </video>
-                    <hr/>
+                // Card video
+                const videoCard = document.createElement('div');
+                videoCard.className = "rounded-xl overflow-hidden cursor-pointer shadow-lg bg-white border-4 border-[#8c5a2b] w-[360px] flex flex-col";
+
+                // HTML video + text dedesubt
+                videoCard.innerHTML = `
+                    <video
+                        src="${videoUrl}"
+                        muted
+                        playsinline
+                        preload="metadata"
+                        loop
+                        class="w-full h-[200px] object-cover rounded-t-xl transition-transform duration-300"
+                        ></video>
+
+                    <div class="p-4 text-center">
+                        <h3 class="text-xl font-bold text-[#8c5a2b] mb-1 truncate">${video.title}</h3>
+                        <p class="text-sm text-gray-700 line-clamp-3">${video.description || ''}</p>
+                    </div>
                 `;
 
-                videosContainer.appendChild(videoElement);
+                videosContainer.appendChild(videoCard);
+
+                const videoEl = videoCard.querySelector('video');
+
+                // Hover: play video preview muted loop + zoom-in
+                videoCard.addEventListener('mouseenter', () => {
+                    videoEl.play();
+                    videoEl.classList.add('scale-105');
+                    videoCard.classList.add('shadow-2xl');
+                });
+
+                // Mouse leave: pause video + remove zoom
+                videoCard.addEventListener('mouseleave', () => {
+                    videoEl.pause();
+                    videoEl.currentTime = 0; // resetare video la început
+                    videoEl.classList.remove('scale-105');
+                    videoCard.classList.remove('shadow-2xl');
+                });
+
+                // Click pe card: fullscreen, play video și unmute după 1.5s
+                videoCard.addEventListener('click', async () => {
+                    try {
+                        videoEl.muted = true;       // să poată porni autoplay
+                        videoEl.controls = true;    // arată controale
+
+                        await videoEl.requestFullscreen();
+                        await videoEl.play();
+
+                        setTimeout(() => {
+                            videoEl.muted = false;  // unmute după 1.5s
+                        }, 1500);
+
+                    } catch (err) {
+                        console.error('Error playing video fullscreen:', err);
+                    }
+                });
             });
+
+            // Gestionare fullscreenchange pentru toate videoclipurile
+            document.addEventListener('fullscreenchange', () => {
+                const fullscreenEl = document.fullscreenElement;
+
+                document.querySelectorAll('video').forEach(video => {
+                    if (fullscreenEl && (video === fullscreenEl || video.parentElement === fullscreenEl)) {
+                        video.controls = true;
+                        video.muted = false;
+                        video.play().catch(() => {});
+                    } else {
+                        video.pause();
+                        video.controls = false;
+                        video.muted = true;
+                        video.currentTime = 0;
+                    }
+                });
+            });
+
         } catch (err) {
             console.error('Error loading videos:', err);
-            videosContainer.innerHTML = '<p>Error loading videos.</p>';
+            videosContainer.innerHTML = '<p class="text-center text-red-500">Error loading videos.</p>';
         }
     }
 
-    // Apelează funcția când pagina se încarcă
-    window.addEventListener('DOMContentLoaded', loadPublicVideos);
+    loadPublicVideos();
+</script>
+
+<script>
+    function playVideoFullscreen(containerEl) {
+        const video = containerEl.querySelector('video');
+        if (!video) return;
+
+        video.muted = true;      // important să fie muted la început
+        video.controls = true;   // să poată controla video-ul în fullscreen
+
+        video.requestFullscreen().then(() => {
+            video.play().then(() => {
+                // după 1-2 secunde scoatem muted
+                setTimeout(() => {
+                    video.muted = false;
+                }, 1500);
+            }).catch(err => console.error('Play error:', err));
+        }).catch(err => console.error('Fullscreen error:', err));
+    }
+
 </script>
 
 <!--pentru blog-->
 <script>
-
-
     document.addEventListener('DOMContentLoaded', async () => {
         const blogList = document.getElementById('blog-list');
+        const blogModal = document.getElementById('blog-modal');
+        const modalContent = document.getElementById('modal-content');
+        const closeModalBtn = document.getElementById('close-modal');
+
+        // Închide modalul
+        closeModalBtn.addEventListener('click', () => {
+            blogModal.classList.add('hidden');
+            modalContent.innerHTML = '';
+        });
+
+        // Închide dacă dăm click în afara cardului
+        blogModal.addEventListener('click', (e) => {
+            if (e.target === blogModal) {
+                blogModal.classList.add('hidden');
+                modalContent.innerHTML = '';
+            }
+        });
 
         try {
             const response = await fetch('http://localhost:8055/items/blog');
@@ -669,7 +933,11 @@
             if (data?.data?.length) {
                 data.data.forEach(post => {
                     const article = document.createElement('article');
-                    article.classList.add('bg-white', 'rounded-lg', 'shadow-md', 'overflow-hidden');
+                    article.classList.add(
+                        'bg-white', 'rounded-lg', 'shadow-md', 'overflow-hidden',
+                        'transform', 'transition-transform', 'duration-300', 'hover:scale-105', 'cursor-pointer'
+                    );
+                    article.setAttribute('data-id', post.id);
 
                     article.innerHTML = `
                     <img src="http://localhost:8055/assets/${post.cover_image}" alt="${post.title}" class="w-full h-48 object-cover">
@@ -677,8 +945,13 @@
                         <h3 class="text-2xl font-bold text-[#8c5a2b] mb-2">${post.title}</h3>
                         <p class="text-sm text-gray-500 mb-4">${new Date(post.created_at).toLocaleDateString()}</p>
                         <p class="text-gray-700">${post.content.substring(0, 120)}...</p>
+                        <span class="text-[#8c5a2b] font-semibold hover:underline mt-4 inline-block">Read More →</span>
                     </div>
                 `;
+
+                    article.addEventListener('click', () => {
+                        openModalWithPost(post.id);
+                    });
 
                     blogList.appendChild(article);
                 });
@@ -691,9 +964,121 @@
             console.error('Error fetching blog posts:', error);
             blogList.innerHTML = '<p class="text-center text-red-600">Failed to load blog posts.</p>';
         }
+
+        async function openModalWithPost(id) {
+            try {
+                const res = await fetch(`http://localhost:8055/items/blog/${id}`);
+                const data = await res.json();
+                const post = data.data;
+
+                modalContent.innerHTML = `
+                <div class="flex flex-col items-center">
+                    <img src="http://localhost:8055/assets/${post.cover_image}" alt="${post.title}" class="w-48 h-48 object-cover rounded mb-4 shadow-md">
+                    <h2 class="text-2xl text-center font-bold text-[#8c5a2b] mb-1">${post.title}</h2>
+                    <p class="text-sm text-gray-500 mb-4">${new Date(post.created_at).toLocaleDateString()}</p>
+                </div>
+                <div class="bg-[#f9f6f1] border border-[#8c5a2b] p-4 rounded-lg text-gray-800 leading-relaxed whitespace-pre-line">
+                    ${post.content}
+                </div>
+            `;
+
+                blogModal.classList.remove('hidden');
+            } catch (err) {
+                modalContent.innerHTML = '<p class="text-red-600">Error loading post content.</p>';
+                blogModal.classList.remove('hidden');
+            }
+        }
     });
 </script>
 
+<!-- SLIDESHOW -->
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const photosSlides = document.getElementById('photos-slides');
+        const imageModal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalCloseBtn = document.getElementById('modal-close');
+
+        try {
+            const response = await fetch('http://localhost:8055/items/photos');
+            const data = await response.json();
+
+            if (data?.data?.length) {
+                data.data.forEach(photo => {
+                    const imageURL = photo.image
+                        ? `http://localhost:8055/assets/${photo.image}`
+                        : 'https://via.placeholder.com/800x500?text=No+Image';
+
+                    const slide = document.createElement('div');
+                    slide.classList.add('swiper-slide', 'relative');
+
+                    slide.innerHTML = `
+                        <img src="${imageURL}" alt="${photo.title || 'Photo'}" class="w-full h-96 object-cover rounded-lg zoom-hover" />
+                        <div class="absolute bottom-0 left-0 w-full bg-black bg-opacity-50 text-white p-4 rounded-b-lg">
+                            <h3 class="text-xl font-semibold">${photo.title || ''}</h3>
+                        </div>
+                    `;
+
+                    photosSlides.appendChild(slide);
+                });
+
+                // După ce imaginile sunt create, adaugă event listener pentru click pe fiecare imagine
+                photosSlides.querySelectorAll('img.zoom-hover').forEach(img => {
+                    img.addEventListener('click', () => {
+                        modalImage.src = img.src;
+                        imageModal.classList.add('opacity-100');
+                    });
+                });
+
+                // Arată containerul după încărcare
+                photosSlides.parentElement.parentElement.classList.add('opacity-100');
+
+                // Inițializează Swiper cu autoplay și săgeți bronz (culoarea o setezi în CSS)
+                const swiper = new Swiper('.photoSwiper', {
+                    slidesPerView: 1,
+                    spaceBetween: 20,
+                    loop: true,
+                    navigation: {
+                        nextEl: '.swiper-button-next',
+                        prevEl: '.swiper-button-prev',
+                    },
+                    pagination: {
+                        el: '.swiper-pagination',
+                        clickable: true,
+                    },
+                    autoplay: {
+                        delay: 5000,
+                        disableOnInteraction: false,
+                    },
+                    breakpoints: {
+                        640: { slidesPerView: 1 },
+                        1024: { slidesPerView: 1 },
+                    },
+                });
+
+            } else {
+                photosSlides.innerHTML = '<p class="text-center text-gray-600">No photos found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching photos:', error);
+            photosSlides.innerHTML = '<p class="text-center text-red-600">Failed to load photos.</p>';
+        }
+
+        // Închide modal la click pe butonul ×
+        modalCloseBtn.addEventListener('click', () => {
+            imageModal.classList.remove('opacity-100');
+            modalImage.src = '';
+        });
+
+        // Închide modal dacă dai click în afara imaginii
+        imageModal.addEventListener('click', (e) => {
+            if (e.target === imageModal) {
+                imageModal.classList.remove('opacity-100');
+                modalImage.src = '';
+            }
+        });
+    });
+</script>
 
 <!-- pentru About -->
 <!-- pentru About -->
@@ -772,6 +1157,72 @@
         } catch (error) {
             console.error('Error fetching team members:', error);
             teamList.innerHTML = '<p class="text-center text-red-600">Failed to load team content.</p>';
+        }
+    });
+</script>
+
+<!-- TESTIMONIAL SECTION-->
+<script>
+
+
+    const reviews = [
+        `"Amazing quality and professionalism!" – Maria & John`,
+        `"Captured every emotion perfectly." – Anna & Mark`,
+        `"Highly recommend for unforgettable wedding videos." – Laura & Paul`,
+        `"The final video brought tears to our eyes." – Emily & David`,
+        `"Every detail was captured beautifully." – Sophia & Alex`
+    ];
+
+    let reviewIndex = 0;
+    const reviewEl = document.getElementById('reviews-slider');
+
+    function showNextReview() {
+        reviewEl.textContent = reviews[reviewIndex];
+        reviewIndex = (reviewIndex + 1) % reviews.length;
+    }
+
+    showNextReview();
+    setInterval(showNextReview, 5000); // schimbă review-ul la fiecare 5 secunde
+
+
+    document.addEventListener('DOMContentLoaded', async () => {
+        const testimonialList = document.getElementById('testimonial-list');
+
+        try {
+            const response = await fetch('http://localhost:8055/items/testimonials?fields=client_name,message,rating,video');
+            const result = await response.json();
+
+            if (result?.data?.length) {
+                result.data.forEach(testimonial => {
+                    const article = document.createElement('article');
+                    article.classList.add('bg-[#f9f6f1]', 'rounded-lg', 'shadow-md', 'p-6', 'flex', 'flex-col', 'justify-between');
+
+                    const ratingStars = '⭐️'.repeat(testimonial.rating || 0);
+
+                    article.innerHTML = `
+            <h3 class="text-xl font-bold text-[#8c5a2b] mb-2">${testimonial.client_name}</h3>
+            <p class="text-gray-700 italic mb-4">"${testimonial.message}"</p>
+            <p class="text-yellow-500 text-lg mb-4">${ratingStars}</p>
+            ${
+                        testimonial.video
+                            ? `<video controls class="w-full rounded-md shadow">
+                     <source src="http://localhost:8055/assets/${testimonial.video}" type="video/mp4">
+                     Your browser does not support the video tag.
+                   </video>`
+                            : ''
+                    }
+          `;
+
+                    testimonialList.appendChild(article);
+                });
+
+                testimonialList.classList.add('opacity-100');
+            } else {
+                testimonialList.innerHTML = '<p class="text-center text-gray-600">No testimonials available yet.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching testimonials:', error);
+            testimonialList.innerHTML = '<p class="text-center text-red-600">Failed to load testimonials.</p>';
         }
     });
 </script>
@@ -992,6 +1443,7 @@
     document.addEventListener('DOMContentLoaded', () => {
         setupAuthModalListeners();
     });
+
 </script>
 </body>
 </html>
