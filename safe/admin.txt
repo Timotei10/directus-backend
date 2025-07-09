@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Admin panel - Videos Upload</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="p-6 text-[#8c5a2b] font-[Inter]">
+
+<h1 class="text-3xl font-semibold mb-6">Admin panel 👑</h1>
+
+<!-- Login form -->
+<section id="login-section" class="mb-10">
+    <h2 class="text-2xl font-bold mb-4">Login</h2>
+    <input id="email" type="email" placeholder="Email" class="border p-2 mb-3 w-64" value="admin_wedding@email.com" />
+    <input id="password" type="password" placeholder="Password" class="border p-2 mb-3 w-64" value="Password123" />
+    <button id="loginBtn" class="bg-[#c89d55] hover:bg-[#b0843f] text-white rounded px-4 py-1">Login</button>
+    <p id="loginMessage" class="mt-2 text-red-600"></p>
+</section>
+
+<!-- Videos management section, hidden until logged in -->
+<section id="videos-section" class="mb-10 hidden">
+    <h2 class="text-2xl font-bold mb-4">Videos</h2>
+    <button id="addVideoBtn"
+            class="mb-4 bg-[#c89d55] hover:bg-[#b0843f] text-white rounded px-4 py-1">
+        + Add video
+    </button>
+
+    <table class="w-full text-left border">
+        <thead class="bg-[#f9f6f1]">
+        <tr>
+            <th class="p-2 border">ID</th>
+            <th class="p-2 border">Title</th>
+            <th class="p-2 border">Description</th>
+            <th class="p-2 border">Date</th>
+            <th class="p-2 border">Video</th>
+            <th class="p-2 border">Actions</th>
+        </tr>
+        </thead>
+        <tbody id="videosTableBody"></tbody>
+    </table>
+</section>
+
+
+
+<!-- Modal for Add/Edit Video -->
+<div id="videoModal" class="fixed inset-0 bg-black/50 hidden items-center justify-center">
+    <div class="bg-white p-6 rounded-lg w-96 max-h-[90vh] overflow-y-auto">
+        <h3 id="videoModalTitle" class="text-xl font-semibold mb-4">Add video</h3>
+        <input id="videoTitle" type="text" class="w-full border p-2 mb-3" placeholder="Title" />
+        <textarea id="videoDescription" class="w-full border p-2 mb-3" placeholder="Description" rows="3"></textarea>
+        <input id="videoDate" type="date" class="w-full border p-2 mb-3" />
+        <label class="block mb-2 font-semibold">Upload video file:</label>
+        <input id="videoFile" type="file" accept="video/*" class="w-full border p-2 mb-5" />
+        <div class="flex justify-end gap-3">
+            <button id="videoCancel" class="px-4 py-1 border rounded">Cancel</button>
+            <button id="videoSave" class="px-4 py-1 bg-[#c89d55] hover:bg-[#b0843f] text-white rounded">Save</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    const directusUrl = 'http://localhost:8055';
+    let directusToken = null;  // Tokenul JWT va fi salvat aici după login
+
+    const loginSection = document.getElementById('login-section');
+    const videosSection = document.getElementById('videos-section');
+    const loginBtn = document.getElementById('loginBtn');
+    const loginMessage = document.getElementById('loginMessage');
+
+    const videosTableBody = document.getElementById('videosTableBody');
+    const videoModal = document.getElementById('videoModal');
+    const videoTitleInput = document.getElementById('videoTitle');
+    const videoDescriptionInput = document.getElementById('videoDescription');
+    const videoDateInput = document.getElementById('videoDate');
+    const videoFileInput = document.getElementById('videoFile');
+
+    let editingId = null; // null = add, altfel edit
+    let editingVideoFileId = null; // ID-ul fișierului deja uploadat la edit
+
+    // LOGIN FUNCTION
+    loginBtn.onclick = async () => {
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value.trim();
+
+        if (!email || !password) {
+            loginMessage.textContent = 'Please enter email and password.';
+            return;
+        }
+
+        loginMessage.textContent = '';
+
+        try {
+            const res = await fetch(`${directusUrl}/auth/login`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, password })
+            });
+
+            if (!res.ok) {
+                loginMessage.textContent = 'Login failed. Check credentials.';
+                return;
+            }
+
+            const data = await res.json();
+            directusToken = data.data.access_token;
+
+            // Ascunde login, arată videos și încarcă lista
+            loginSection.classList.add('hidden');
+            videosSection.classList.remove('hidden');
+            loadVideos();
+
+        } catch (err) {
+            loginMessage.textContent = 'Error during login. See console.';
+            console.error(err);
+        }
+    };
+
+    // LOAD VIDEOS
+    async function loadVideos() {
+        try {
+            const res = await fetch(`${directusUrl}/items/Videos?fields=id,title,description,wedding_date,video_file.id,video_file.filename_disk`, {
+                headers: {
+                    'Authorization': `Bearer ${directusToken}`
+                }
+            });
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('API error:', res.status, text);
+                alert('Error fetching videos: ' + res.status);
+                return;
+            }
+
+            const data = await res.json();
+
+            if (!data.data) {
+                console.error('Response missing data field:', data);
+                alert('Invalid API response');
+                return;
+            }
+
+            videosTableBody.innerHTML = '';
+
+            data.data.forEach(v => {
+                // Generează rânduri în tabel cu datele video, inclusiv wedding_date
+                const videoFileName = v.video_file ? escapeHtml(v.video_file.filename_disk) : 'No file';
+                const weddingDateFormatted = v.wedding_date ? new Date(v.wedding_date).toLocaleDateString() : '';
+                videosTableBody.innerHTML += `
+                <tr>
+                    <td class="p-2 border">${v.id}</td>
+                    <td class="p-2 border">${escapeHtml(v.title)}</td>
+                    <td class="p-2 border">${escapeHtml(v.description)}</td>
+                    <td class="p-2 border">${weddingDateFormatted}</td>
+                    <td class="p-2 border">${videoFileName}</td>
+                    <td class="p-2 border">
+                        <button onclick="openEdit(${v.id}, '${escapeJs(v.title)}', '${escapeJs(v.description)}', '${v.wedding_date || ''}', '${v.video_file ? v.video_file.id : ''}')" class="mr-2 bg-yellow-300 px-2 rounded">Edit</button>
+                        <button onclick="deleteVideo(${v.id})" class="bg-red-400 px-2 rounded text-white">Delete</button>
+                    </td>
+                </tr>
+            `;
+            });
+        } catch (err) {
+            console.error('Fetch error:', err);
+            alert('Fetch error, check console');
+        }
+    }
+
+
+    // Escape JS for inline onclick
+    function escapeJs(str) {
+        if (!str) return '';
+        return str.replace(/'/g, "\\'").replace(/"/g, '\\"').replace(/\n/g, '\\n');
+    }
+    // Escape HTML to prevent XSS
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text.replace(/[&<>"']/g, function (m) {
+            return {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#39;'
+            }[m];
+        });
+    }
+
+    // OPEN MODAL ADD/EDIT
+    function openEdit(id = null, title = '', description = '', wedding_date = '', videoFileId = '') {
+        editingId = id;
+        editingVideoFileId = videoFileId || null;
+        document.getElementById('videoModalTitle').textContent = id ? 'Edit video' : 'Add video';
+        videoTitleInput.value = title;
+        videoDescriptionInput.value = description;
+        videoDateInput.value = wedding_date ? wedding_date.split('T')[0] : '';
+        videoFileInput.value = ''; // reset input file
+        videoModal.classList.remove('hidden');
+    }
+
+
+    // SAVE VIDEO (ADD or UPDATE)
+    document.getElementById('videoSave').addEventListener('click', async () => {
+        const title = videoTitleInput.value.trim();
+        const description = videoDescriptionInput.value.trim();
+        const date = videoDateInput.value;
+        const file = videoFileInput.files[0];
+
+
+        if (!title) {
+            alert('Please fill in the title.');
+            return;
+        }
+
+        let videoFileId = editingVideoFileId;
+
+        // Dacă este upload de fișier nou
+        if (file) {
+            try {
+                videoFileId = await uploadFile(file);
+            } catch (e) {
+                alert('Error uploading file');
+                return;
+            }
+        }
+
+        // Construim obiectul video
+        const videoData = {
+            title,
+            description,
+            wedding_date: date || null,  // ← denumirea corectă conform Directus
+            video_file: videoFileId || null
+        };
+
+
+        try {
+            let res;
+            if (editingId) {
+                // Update
+                res = await fetch(`${directusUrl}/items/Videos/${editingId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${directusToken}`
+                    },
+                    body: JSON.stringify(videoData)
+                });
+            } else {
+                // Add
+                res = await fetch(`${directusUrl}/items/Videos`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${directusToken}`
+                    },
+                    body: JSON.stringify(videoData)
+                });
+            }
+
+            if (!res.ok) {
+                const text = await res.text();
+                console.error('Error saving video:', res.status, text);
+                alert('Failed to save video');
+                return;
+            }
+
+            // Success - închidem modal și reîncărcăm lista
+            closeModal();
+            loadVideos();
+
+        } catch (err) {
+            console.error(err);
+            alert('Error saving video, see console');
+        }
+    });
+
+    // UPLOAD FILE
+    async function uploadFile(file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        const res = await fetch(`${directusUrl}/files`, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${directusToken}`
+            },
+            body: formData
+        });
+
+        if (!res.ok) {
+            const text = await res.text();
+            console.error('File upload failed:', res.status, text);
+            throw new Error('Upload failed');
+        }
+
+        const data = await res.json();
+        return data.data.id; // returnăm id-ul fișierului uploadat
+    }
+
+    // DELETE VIDEO
+    async function deleteVideo(id) {
+        if (!confirm('Are you sure you want to delete this video?')) return;
+
+        try {
+            const res = await fetch(`${directusUrl}/items/Videos/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${directusToken}`
+                }
+            });
+
+            if (!res.ok) {
+                alert('Failed to delete video');
+                return;
+            }
+
+            loadVideos();
+
+        } catch (err) {
+            console.error(err);
+            alert('Error deleting video');
+        }
+    }
+
+    // CLOSE MODAL
+    document.getElementById('videoCancel').onclick = closeModal;
+    function closeModal() {
+        videoModal.classList.add('hidden');
+        editingId = null;
+        editingVideoFileId = null;
+        videoTitleInput.value = '';
+        videoDescriptionInput.value = '';
+        videoDateInput.value = '';
+        videoFileInput.value = '';
+    }
+
+    // Add Video button opens modal for new video
+    document.getElementById('addVideoBtn').onclick = () => openEdit();
+
+</script>
+</body>
+</html>

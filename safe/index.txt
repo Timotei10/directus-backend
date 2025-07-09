@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Wedding Video Studio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Playfair+Display:wght@600&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #8c5a2b;
+        }
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+        }
+        .rose {
+            position: fixed;
+            top: -100px;
+            width: 40px;
+            height: 40px;
+            opacity: 0.7;
+            animation: fall linear infinite;
+            pointer-events: none;
+            user-select: none;
+        }
+        @keyframes fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.8;
+            }
+            100% {
+                transform: translateY(120vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        nav a.active {
+            text-decoration: underline;
+            font-weight: 700;
+            color: #b0843f;
+        }
+
+        /* Buton login/register fixat sus dreapta */
+        #loginRegisterBtn {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            background-color: #c89d55;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            z-index: 1001;
+            transition: background-color 0.3s ease;
+        }
+        #loginRegisterBtn:hover {
+            background-color: #b0843f;
+        }
+
+        /* Popup overlay */
+        #authModal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        /* Popup content */
+        #authModalContent {
+            background: white;
+            padding: 2rem;
+            border-radius: 0.75rem;
+            width: 320px;
+            max-width: 90vw;
+            position: relative;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            font-family: 'Inter', sans-serif;
+            color: #8c5a2b;
+        }
+
+        /* Close button */
+        #authModalClose {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.75rem;
+            background: transparent;
+            border: none;
+            font-size: 1.5rem;
+            color: #8c5a2b;
+            cursor: pointer;
+        }
+
+        /* Tabs container */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 1rem;
+            gap: 1rem;
+        }
+        .tab {
+            cursor: pointer;
+            padding: 0.5rem 1rem;
+            border-bottom: 2px solid transparent;
+            font-weight: 600;
+            color: #8c5a2b;
+            transition: border-color 0.3s ease;
+        }
+        .tab.active {
+            border-bottom: 2px solid #c89d55;
+            color: #c89d55;
+        }
+
+        /* Form fields */
+        form input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            margin-bottom: 1rem;
+            border: 1px solid #c89d55;
+            border-radius: 0.375rem;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            color: #8c5a2b;
+        }
+        form button {
+            width: 100%;
+            background-color: #c89d55;
+            color: white;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            cursor: pointer;
+            font-size: 1rem;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        form button:hover {
+            background-color: #b0843f;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        .animate-fade-in {
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="relative overflow-x-hidden">
+
+<!-- Trandafiri animati -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        showWelcomeMessage();
+        for (let i = 0; i < 10; i++) {
+            const rose = document.createElement('div');
+            rose.className = 'rose';
+            rose.style.left = `${Math.random() * 100}vw`;
+            rose.style.animationDuration = `${10 + Math.random() * 10}s`;
+            rose.style.animationDelay = `${Math.random() * 10}s`;
+            rose.innerHTML = `
+          <svg viewBox="0 0 24 24" fill="#f9a8d4" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2C10.9 2 9.68 2.44 9.03 3.5C7.5 6 10 8 12 9.5C14 8 16.5 6 15 3.5C14.35 2.44 13.1 2 12 2ZM12 11C8 11 4 13.5 4 17.5C4 18.33 4.67 19 5.5 19H18.5C19.33 19 20 18.33 20 17.5C20 13.5 16 11 12 11Z"/>
+          </svg>`;
+            document.body.appendChild(rose);
+        }
+    });
+</script>
+
+<!-- NAVIGATION FIXED -->
+<nav class="fixed top-0 left-0 right-0 bg-white border-b border-[#f0c1d9] flex justify-between items-center py-4 px-6 z-50 text-[#8c5a2b] font-semibold text-lg shadow-sm">
+
+    <!-- Welcome message stânga -->
+    <div id="welcome-container" class="hidden font-semibold text-[#8c5a2b]">
+        Welcome, <span id="welcome-username">User</span>!
+    </div>
+
+    <!-- Meniu centru -->
+    <div class="flex justify-center gap-8">
+        <a href="#hero" class="hover:text-[#b0843f] transition">Hero</a>
+        <a href="#portfolio" class="hover:text-[#b0843f] transition">Portfolio</a>
+        <a href="#contact" class="hover:text-[#b0843f] transition">Contact</a>
+    </div>
+
+    <!-- Buton Logout dreapta -->
+    <button id="logoutBtn" class="hidden bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-1 px-4 rounded cursor-pointer">
+        Logout
+    </button>
+
+    <!-- Buton Admin panel (vizibil doar pentru admin) -->
+    <a id="adminPanelBtn"
+       href="admin.html"
+       class="hidden bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-1 px-4 rounded">
+        Admin panel
+    </a>
+
+
+    <!-- Buton Login/Register (vizibil când nu ești logat) -->
+    <button id="loginRegisterBtn" class="bg-transparent text-[#8c5a2b] font-semibold hover:text-[#b0843f] py-1 px-4 rounded cursor-pointer">
+        Login / Register
+    </button>
+
+</nav>
+
+<!-- AUTH MODAL -->
+<div id="authModal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" tabindex="-1" class="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center hidden z-50">
+    <div id="authModalContent" class="bg-white rounded-lg p-6 w-96 relative shadow-lg">
+        <button id="authModalClose" aria-label="Close login/register form" class="absolute top-3 right-3 text-2xl font-bold hover:text-[#b0843f]">&times;</button>
+
+        <div class="tabs flex mb-6" role="tablist">
+            <div id="tab-login" class="tab cursor-pointer border-b-2 border-[#c89d55] pb-2 font-semibold" role="tab" tabindex="0" aria-selected="true" aria-controls="loginPanel">Login</div>
+            <div id="tab-register" class="tab cursor-pointer text-gray-400 pb-2" role="tab" tabindex="-1" aria-selected="false" aria-controls="registerPanel">Register</div>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginPanel" role="tabpanel" aria-labelledby="tab-login">
+            <input type="email" id="loginEmail" placeholder="Email" required autocomplete="username" class="w-full mb-4 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#c89d55]" />
+            <input type="password" id="loginPassword" placeholder="Password" required autocomplete="current-password" class="w-full mb-6 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#c89d55]" />
+            <button type="submit" class="w-full bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-2 rounded">Log In</button>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registerPanel" role="tabpanel" aria-labelledby="tab-register" style="display:none;">
+            <input type="text" id="registerName" placeholder="Full Name" required autocomplete="name" class="w-full mb-4 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#c89d55]" />
+            <input type="email" id="registerEmail" placeholder="Email" required autocomplete="email" class="w-full mb-4 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#c89d55]" />
+            <input type="password" id="registerPassword" placeholder="Password" required autocomplete="new-password" class="w-full mb-6 border border-gray-300 rounded px-3 py-2 focus:outline-none focus:border-[#c89d55]" />
+            <button type="submit" class="w-full bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-2 rounded">Register</button>
+        </form>
+    </div>
+</div>
+
+<!-- HERO SECTION -->
+<section id="hero" class="min-h-screen flex flex-col justify-center items-center text-center px-4 py-28 pt-[6rem] md:pt-32 bg-gradient-to-br from-pink-50 to-pink-100">
+    <h1 class="text-5xl md:text-6xl text-[#8c5a2b] font-semibold mb-4">Capturing Your Magical Moments</h1>
+    <p class="text-lg text-[#8c5a2b] max-w-2xl mb-6 italic">Elegant wedding videography crafted with passion and precision. Timeless visuals for your once-in-a-lifetime day.</p>
+    <a href="#portfolio" class="bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold py-3 px-6 rounded-full transition">View Portfolio</a>
+</section>
+
+<!-- PORTFOLIO SECTION -->
+<section id="portfolio" class="px-6 py-20 bg-[#f9f6f1]">
+    <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-12">Portfolio</h2>
+    <div id="portfolio-content" class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <!-- Videos or message inserted by JS -->
+    </div>
+</section>
+<!--aici apar video!-->
+<div id="videos-list" class="space-y-12 max-w-6xl mx-auto p-4 opacity-0 transition-opacity duration-700 ease-in-out">
+    <!-- Videoclipurile vor fi inserate aici din JavaScript -->
+        <video width="600" controls class="rounded-lg shadow-lg flex-shrink-0">
+            <source src="..." type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+        <div class="max-w-md text-center md:text-left">
+            <h2 class="text-2xl font-semibold mb-2" id="video-title">Title here</h2>
+            <p class="mb-2 text-gray-600" id="video-description">Description here</p>
+            <p class="text-sm text-gray-500 mb-1"><strong>Wedding Date:</strong> <span id="video-wedding-date">2025-07-01</span></p>
+            <p class="text-sm text-gray-500"><strong>Client Name:</strong> <span id="video-client-name">Client here</span></p>
+        </div>
+    </div>
+</div>
+
+<!-- BLOG SECTION -->
+<section id="blog-section" class="bg-[#f9f6f1] px-6 py-20">
+    <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-12">Latest Blog Posts</h2>
+
+    <!-- Lista articolelor de blog -->
+    <div id="blog-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 opacity-0 transition-opacity duration-700 ease-in-out">
+        <!-- Articolele vor fi inserate din JavaScript -->
+    </div>
+</section>
+
+
+
+<!-- CONTACT SECTION -->
+<section id="contact" class="px-6 py-20">
+    <h2 class="text-4xl text-center text-[#8c5a2b] font-semibold mb-8">Get in Touch</h2>
+    <form class="max-w-xl mx-auto bg-white p-8 rounded-lg shadow-md space-y-4" onsubmit="event.preventDefault(); alert('Thank you for reaching out!');">
+        <input type="text" placeholder="Your Name" class="w-full border border-[#c89d55] px-4 py-2 rounded-md focus:outline-none" required />
+        <input type="email" placeholder="Your Email" class="w-full border border-[#c89d55] px-4 py-2 rounded-md focus:outline-none" required />
+        <textarea placeholder="Your Message" class="w-full border border-[#c89d55] px-4 py-2 rounded-md focus:outline-none h-32" required></textarea>
+        <button type="submit" class="bg-[#c89d55] hover:bg-[#b0843f] text-white font-semibold px-6 py-2 rounded-full">Send Message</button>
+    </form>
+</section>
+
+
+
+
+<script>
+    // Animation trandafiri (nu modificat)
+    document.addEventListener('DOMContentLoaded', () => {
+        // Creează 10 flori "rose" animate pe ecran
+        for (let i = 0; i < 10; i++) {
+            const rose = document.createElement('div');
+            rose.className = 'rose';
+            rose.style.left = `${Math.random() * 100}vw`;
+            rose.style.animationDuration = `${10 + Math.random() * 10}s`;
+            rose.style.animationDelay = `${Math.random() * 10}s`;
+            rose.innerHTML = `
+      <svg viewBox="0 0 24 24" fill="#f9a8d4" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 2C10.9 2 9.68 2.44 9.03 3.5C7.5 6 10 8 12 9.5C14 8 16.5 6 15 3.5C14.35 2.44 13.1 2 12 2ZM12 11C8 11 4 13.5 4 17.5C4 18.33 4.67 19 5.5 19H18.5C19.33 19 20 18.33 20 17.5C20 13.5 16 11 12 11Z"/>
+      </svg>`;
+            document.body.appendChild(rose);
+        }
+
+        // Verifică dacă userul este deja logat (din localStorage)
+        showWelcomeMessage();
+    });
+
+    // ELEMENTE UI (modal login/register)
+    const loginRegisterBtn = document.getElementById('loginRegisterBtn');
+    const authModal = document.getElementById('authModal');
+    const authModalClose = document.getElementById('authModalClose');
+    const tabLogin = document.getElementById('tab-login');
+    const tabRegister = document.getElementById('tab-register');
+    const loginPanel = document.getElementById('loginPanel');
+    const registerPanel = document.getElementById('registerPanel');
+
+    function showLogin() {
+        tabLogin.classList.add('active');
+        tabLogin.setAttribute('aria-selected', 'true');
+        tabLogin.setAttribute('tabindex', '0');
+        tabRegister.classList.remove('active');
+        tabRegister.setAttribute('aria-selected', 'false');
+        tabRegister.setAttribute('tabindex', '-1');
+
+        loginPanel.style.display = 'block';
+        registerPanel.style.display = 'none';
+    }
+
+    function showRegister() {
+        tabRegister.classList.add('active');
+        tabRegister.setAttribute('aria-selected', 'true');
+        tabRegister.setAttribute('tabindex', '0');
+        tabLogin.classList.remove('active');
+        tabLogin.setAttribute('aria-selected', 'false');
+        tabLogin.setAttribute('tabindex', '-1');
+
+        registerPanel.style.display = 'block';
+        loginPanel.style.display = 'none';
+    }
+
+    // Afișează/ascunde elementele UI în funcție de starea de autentificare
+    function showWelcomeMessage(email = null, name = null) {
+        if (!email) email = localStorage.getItem('userEmail');
+        if (!name) name = localStorage.getItem('userName');
+
+        const isAdmin = email === 'admin_wedding@email.com';
+        const loginBtn = document.getElementById('loginRegisterBtn');
+        const welcomeCont = document.getElementById('welcome-container');
+        const welcomeName = document.getElementById('welcome-username');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const adminBtn = document.getElementById('adminPanelBtn');
+
+        if (email && name) {
+            welcomeName.innerHTML = isAdmin ? `👑 ${name}` : name;
+            welcomeCont.classList.remove('hidden');
+            logoutBtn.classList.remove('hidden');
+            loginBtn.classList.add('hidden');
+
+            if (isAdmin) adminBtn.classList.remove('hidden');
+            else adminBtn.classList.add('hidden');
+        } else {
+            welcomeCont.classList.add('hidden');
+            logoutBtn.classList.add('hidden');
+            adminBtn.classList.add('hidden');
+            loginBtn.classList.remove('hidden');
+        }
+    }
+
+    // Eveniment pentru buton logout
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        localStorage.removeItem('userName');
+        localStorage.removeItem('userEmail');
+        localStorage.removeItem('accessToken');
+        showWelcomeMessage();
+    });
+
+    // Deschide modal login/register
+    loginRegisterBtn.addEventListener('click', () => {
+        authModal.style.display = 'flex';
+        showLogin();
+    });
+
+    // Închide modal
+    authModalClose.addEventListener('click', () => {
+        authModal.style.display = 'none';
+    });
+
+    // Switch între tab-uri login/register
+    tabLogin.addEventListener('click', showLogin);
+    tabRegister.addEventListener('click', showRegister);
+
+    // Închide modal la click în afara conținutului
+    authModal.addEventListener('click', e => {
+        if (e.target === authModal) {
+            authModal.style.display = 'none';
+        }
+    });
+
+    async function loginUser(email, password) {
+        const response = await fetch('http://localhost:8055/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.errors ? errorData.errors[0].message : 'Login failed');
+        }
+        return response.json();
+    }
+
+    async function getCurrentUser(token) {
+        const response = await fetch('http://localhost:8055/users/me', {
+            headers: {
+                'Authorization': 'Bearer ' + token
+            }
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch current user');
+        }
+
+        const data = await response.json();
+        return data;
+    }
+
+
+
+    // Login form submit
+    loginPanel.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value;
+
+        try {
+            const loginData = await loginUser(email, password);
+            const token = loginData.data.access_token;
+            const userInfo = await getCurrentUser(token);
+            const name = userInfo.data.first_name || email;
+
+            // Salvează în localStorage
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userName', name);
+            localStorage.setItem('accessToken', token);
+
+            showWelcomeMessage(email, name);
+            authModal.style.display = 'none';
+        } catch (error) {
+            alert('Login failed: ' + error.message);
+        }
+    });
+
+    // Register form submit
+    registerPanel.addEventListener('submit', async e => {
+        e.preventDefault();
+
+        const name = document.getElementById('registerName').value.trim();
+        const email = document.getElementById('registerEmail').value.trim();
+        const password = document.getElementById('registerPassword').value;
+
+        try {
+            // Înregistrează user-ul prin API-ul public (fără token)
+            await registerUser(name, email, password);
+            alert('User created successfully! You are now logged in.');
+
+            // Salvează date localStorage (temporar, va trebui să faci login real)
+            localStorage.setItem('userEmail', email);
+            localStorage.setItem('userName', name);
+
+            // După creare cont, forțează login automat
+            const loginData = await loginUser(email, password);
+            const token = loginData.data.access_token;
+            localStorage.setItem('accessToken', token);
+
+            showWelcomeMessage(email, name);
+            authModal.style.display = 'none';
+        } catch (err) {
+            alert('Registration failed: ' + err.message);
+        }
+    });
+
+    // Funcție înregistrare user (apel către backend Directus)
+    async function registerUser(name, email, password) {
+        const response = await fetch('http://localhost:8055/users', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                email,
+                password,
+                first_name: name,
+                role: '056bd822-6b15-444c-b3b4-aff2eda505de' // rolul Authenticated
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            throw new Error(data.errors?.[0]?.message || 'Failed to register user');
+        }
+
+        return data;
+    }
+
+    // pt incarcare video
+    fetch('http://localhost:8055/items/Videos?fields=title,description,wedding_date,client_name,video_file.filename_disk')
+        .then(res => res.json())
+        .then(data => {
+            if (!data.data || !data.data.length) {
+                console.error('No videos found');
+                return;
+            }
+
+            const container = document.getElementById('videos-list');
+            container.innerHTML = ''; // curățăm containerul
+
+            data.data.forEach(video => {
+                if (!video.video_file || !video.video_file.filename_disk) {
+                    console.warn('Video file missing for item', video.id);
+                    return;
+                }
+
+                const videoUrl = `http://localhost:8055/assets/${video.video_file.filename_disk}`;
+
+                const videoBlock = document.createElement('div');
+                videoBlock.className = 'flex flex-col md:flex-row items-center gap-6';
+
+                videoBlock.innerHTML = `
+  <div class="flex flex-col md:flex-row items-center bg-white rounded-xl shadow-lg overflow-hidden transform transition duration-500 hover:scale-105 w-full animate-fade-in">
+    <video class="w-full md:w-2/3 max-h-[400px] object-cover" controls>
+      <source src="${videoUrl}" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="p-6 md:w-1/3 text-center md:text-left space-y-2">
+      <h2 class="text-2xl font-bold text-gray-900">${video.title}</h2>
+      <p class="text-gray-700">${video.description || 'No description provided.'}</p>
+      <p class="text-sm text-gray-500"><strong>Wedding Date:</strong> ${video.wedding_date ? new Date(video.wedding_date).toLocaleDateString() : 'N/A'}</p>
+      <p class="text-sm text-gray-500"><strong>Client Name:</strong> ${video.client_name || 'N/A'}</p>
+    </div>
+  </div>
+`;
+
+
+
+                container.appendChild(videoBlock);
+            });
+
+            // Fade-in cu Intersection Observer
+            const observer = new IntersectionObserver(
+                (entries, observer) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                            container.classList.remove('opacity-0');
+                            container.classList.add('opacity-100');
+                            observer.unobserve(container);
+                        }
+                    });
+                },
+                { threshold: 0.1 }
+            );
+
+            observer.observe(container);
+        })
+        .catch(err => console.error('Fetch error:', err));
+
+</script>
+
+<script>
+    const directusUrl = 'http://localhost:8055'; // Adaptează dacă folosești alt URL
+    const videosContainer = document.getElementById('videos-list'); // Container în care le afișăm
+
+    async function loadPublicVideos() {
+        try {
+            const res = await fetch(`${directusUrl}/items/Videos?fields=title,description,video_file.filename_disk`);
+            const data = await res.json();
+
+            if (!data.data || data.data.length === 0) {
+                videosContainer.innerHTML = '<p>No videos found.</p>';
+                return;
+            }
+
+            videosContainer.innerHTML = ''; // Golește containerul
+
+            data.data.forEach(video => {
+                const videoElement = document.createElement('div');
+                videoElement.classList.add('video-card');
+
+                const videoUrl = `${directusUrl}/assets/${video.video_file.filename_disk}`;
+
+                videoElement.innerHTML = `
+                    <h3>${video.title}</h3>
+                    <p>${video.description || ''}</p>
+                    <video width="640" controls>
+                        <source src="${videoUrl}" type="video/mp4">
+                        Your browser does not support the video tag.
+                    </video>
+                    <hr/>
+                `;
+
+                videosContainer.appendChild(videoElement);
+            });
+        } catch (err) {
+            console.error('Error loading videos:', err);
+            videosContainer.innerHTML = '<p>Error loading videos.</p>';
+        }
+    }
+
+    // Apelează funcția când pagina se încarcă
+    window.addEventListener('DOMContentLoaded', loadPublicVideos);
+</script>
+
+<!--pentru blog-->
+<script>
+    document.addEventListener('DOMContentLoaded', async () => {
+        const blogList = document.getElementById('blog-list');
+
+        try {
+            const response = await fetch('http://localhost:8055/items/blog');
+            const data = await response.json();
+
+            if (data?.data?.length) {
+                data.data.forEach(post => {
+                    const article = document.createElement('article');
+                    article.classList.add('bg-white', 'rounded-lg', 'shadow-md', 'overflow-hidden');
+
+                    article.innerHTML = `
+                    <img src="http://localhost:8055/assets/${post.cover_image}" alt="${post.title}" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-2xl font-bold text-[#8c5a2b] mb-2">${post.title}</h3>
+                        <p class="text-sm text-gray-500 mb-4">${new Date(post.created_at).toLocaleDateString()}</p>
+                        <p class="text-gray-700">${post.content.substring(0, 120)}...</p>
+                    </div>
+                `;
+
+                    blogList.appendChild(article);
+                });
+
+                blogList.classList.add('opacity-100');
+            } else {
+                blogList.innerHTML = '<p class="text-center text-gray-600">No blog posts found.</p>';
+            }
+        } catch (error) {
+            console.error('Error fetching blog posts:', error);
+            blogList.innerHTML = '<p class="text-center text-red-600">Failed to load blog posts.</p>';
+        }
+    });
+</script>
+
+
+</body>
+</html>
+
+
