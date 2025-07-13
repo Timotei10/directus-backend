@@ -1,0 +1,16 @@
+[
+	{
+		"id": 1,
+		"name": "eu",
+		"role": "sef",
+		"photo": "21d23f85-7499-46dc-9c78-8d56f60a61fb",
+		"bio": "daaddaaa"
+	},
+	{
+		"id": 2,
+		"name": "sefu",
+		"role": "eu",
+		"photo": "d3389977-8115-4e24-9251-9331ced1991f",
+		"bio": "salut"
+	}
+]

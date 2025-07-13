@@ -1,0 +1,23 @@
+[
+	{
+		"id": 1,
+		"client_name": "John",
+		"message": "WOW!",
+		"rating": 5,
+		"video": "e86fd701-d52b-44ab-bd51-8d4567a04763"
+	},
+	{
+		"id": 2,
+		"client_name": "Emma",
+		"message": "Incredible!",
+		"rating": 5,
+		"video": "32505ee6-ffa4-4c7a-bb80-638e8cf71a68"
+	},
+	{
+		"id": 3,
+		"client_name": "Marl",
+		"message": "Superb!",
+		"rating": 5,
+		"video": "966521fe-b234-423d-810f-403f52e27f8a"
+	}
+]

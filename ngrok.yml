@@ -1,0 +1,12 @@
+authtoken: 2zhM9KWO8pO855kkaADNICg0Quv_3xQjMrQuSkQwAdUjC8oV
+version: "2"
+tunnels:
+  xampp:
+    proto: http
+    addr: 80
+  backend:
+    proto: http
+    addr: 3000
+  directus:
+    proto: http
+    addr: 8055

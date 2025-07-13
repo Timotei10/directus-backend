@@ -1,0 +1,23 @@
+[
+	{
+		"id": 1,
+		"name": "Admin User",
+		"email": "admin_wedding@email.com",
+		"message": "works",
+		"created_at": null
+	},
+	{
+		"id": 2,
+		"name": "test",
+		"email": "test@email.com",
+		"message": "aaa",
+		"created_at": null
+	},
+	{
+		"id": 3,
+		"name": "test",
+		"email": "test@email.com",
+		"message": "hhh",
+		"created_at": null
+	}
+]

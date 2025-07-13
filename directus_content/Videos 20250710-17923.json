@@ -1,0 +1,50 @@
+[
+	{
+		"id": 1,
+		"status": "published",
+		"user_created": "dc1d102f-4103-4824-a4a1-35e576046d39",
+		"date_created": "2025-07-08T07:17:15.722Z",
+		"date_updated": "2025-07-08T17:16:24.956Z",
+		"title": "Practic",
+		"description": "practic un videoaa",
+		"video_file": "73336045-0150-4e80-b32d-e3fe910a9f2e",
+		"wedding_date": "2025-07-01T00:00:00",
+		"client_name": "Practic"
+	},
+	{
+		"id": 2,
+		"status": "draft",
+		"user_created": "dc1d102f-4103-4824-a4a1-35e576046d39",
+		"date_created": "2025-07-08T07:50:55.973Z",
+		"date_updated": null,
+		"title": "czcz",
+		"description": "czczcz",
+		"video_file": "cb389d18-87c2-4a58-b1ce-343f118bbdcb",
+		"wedding_date": "2025-07-02T12:00:00",
+		"client_name": "aaaa"
+	},
+	{
+		"id": 3,
+		"status": "draft",
+		"user_created": "dc1d102f-4103-4824-a4a1-35e576046d39",
+		"date_created": "2025-07-08T07:55:56.635Z",
+		"date_updated": null,
+		"title": "czczcecew",
+		"description": "werwer",
+		"video_file": "f0ec019d-fe16-4124-b2a6-f0cdd9349eca",
+		"wedding_date": "2025-06-11T10:55:00",
+		"client_name": "qqqqq"
+	},
+	{
+		"id": 6,
+		"status": "draft",
+		"user_created": "dc1d102f-4103-4824-a4a1-35e576046d39",
+		"date_created": "2025-07-08T10:20:13.599Z",
+		"date_updated": null,
+		"title": "salut",
+		"description": "saktt",
+		"video_file": "43fe5d48-7f2d-4b3c-bd57-80b7f5128cd3",
+		"wedding_date": "2022-11-12T00:00:00",
+		"client_name": null
+	}
+]
