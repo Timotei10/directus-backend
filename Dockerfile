@@ -1,11 +1,12 @@
-FROM node:20
+FROM directus/directus:latest
 
-WORKDIR /app
+WORKDIR /directus
 
-COPY . .
-
-RUN npm install
+# Copiază baza de date și fișierele media
+COPY ./data ./data
+COPY ./uploads ./uploads
+COPY .env .env
 
 EXPOSE 8055
 
-CMD ["npx", "directus", "start"]
+CMD ["directus", "start"]
