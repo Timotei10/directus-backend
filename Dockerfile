@@ -1,17 +1,23 @@
-FROM directus/directus:latest
+FROM node:18-alpine
 
-WORKDIR /directus
+# Instalăm Directus global
+RUN npm install -g directus
 
+# Cream directorul de lucru
+WORKDIR /app
+
+# Copiem fișierele în container
 COPY .env .env
-
-# Copiem baza de date în folder temporar
 COPY ./data/data.db /tmp/data.db
 
-# Copiem uploads (dacă e nevoie)
-COPY ./uploads ./uploads
+# Cream folderul de volum pentru baza de date
+RUN mkdir -p /data
 
-# Expunem portul default Directus
+# Mutăm baza de date la locația corectă
+RUN cp /tmp/data.db /data/data.db
+
+# Expunem portul default
 EXPOSE 8055
 
-# Mutăm baza de date în /data (scriabil) și pornim aplicația
-CMD ["/bin/sh", "-c", "mkdir -p /data && cp /tmp/data.db /data/data.db && directus start"]
+# Pornim aplicația
+CMD ["directus", "start"]
