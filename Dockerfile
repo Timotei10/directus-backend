@@ -4,16 +4,11 @@ WORKDIR /directus
 
 COPY .env .env
 
-# Creăm folderul și copiem baza de date
-RUN mkdir -p /directus/database
-COPY ./data/data.db /directus/database/data.db
-
-# Setăm permisiuni de scriere pe baza de date
-RUN chmod -R 0777 /directus/database
+# Copiem baza de date într-un folder temporar
+COPY ./data/data.db /tmp/data.db
 
 # Copiem uploads
 COPY ./uploads ./uploads
 
-EXPOSE 8055
-
-CMD ["directus", "start"]
+# Mutăm fișierul în volum writeable la runtime
+CMD ["/bin/sh", "-c", "mkdir -p /data && cp /tmp/data.db /data/data.db && directus start"]
