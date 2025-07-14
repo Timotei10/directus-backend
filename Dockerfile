@@ -4,11 +4,14 @@ WORKDIR /directus
 
 COPY .env .env
 
-# Copiem baza de date într-un folder temporar
+# Copiem baza de date în folder temporar
 COPY ./data/data.db /tmp/data.db
 
-# Copiem uploads
+# Copiem uploads (dacă e nevoie)
 COPY ./uploads ./uploads
 
-# Mutăm fișierul în volum writeable la runtime
+# Expunem portul default Directus
+EXPOSE 8055
+
+# Mutăm baza de date în /data (scriabil) și pornim aplicația
 CMD ["/bin/sh", "-c", "mkdir -p /data && cp /tmp/data.db /data/data.db && directus start"]
