@@ -3,22 +3,29 @@ import cors from 'cors';
 import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-// CSP permissive example
-app.use((req, res, next) => {
-    res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'");
-    next();
-});
+// OPTIONAL: CSP — scoate dacă ai probleme în frontend
+// app.use((req, res, next) => {
+//     res.setHeader("Content-Security-Policy", "default-src 'self'; img-src 'self' data:; script-src 'self'; style-src 'self' 'unsafe-inline'");
+//     next();
+// });
 
-const PORT = 3000;
-const DIRECTUS_URL = 'http://localhost:8055';
-const ADMIN_TOKEN = 'PUNE_AICI_TOKENUL_ADMIN';
-const JWT_SECRET = 'secretul_tau_jwt';
+const PORT = process.env.PORT || 3000;
+const DIRECTUS_URL = process.env.DIRECTUS_URL;
+const ADMIN_TOKEN = process.env.DIRECTUS_ADMIN_TOKEN;
+const JWT_SECRET = process.env.JWT_SECRET;
+
+app.get('/', (req, res) => {
+    res.send('API is running');
+});
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
