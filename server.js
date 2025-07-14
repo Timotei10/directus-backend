@@ -4,8 +4,16 @@ import argon2 from 'argon2';
 import jwt from 'jsonwebtoken';
 import fetch from 'node-fetch';
 import dotenv from 'dotenv';
+import { bootstrap } from 'directus';
 
 dotenv.config();
+
+const start = async () => {
+    const directus = await bootstrap();
+    await directus.start();
+};
+
+start();
 
 const app = express();
 
